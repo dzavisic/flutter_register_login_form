@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_register_login_form_private/src/components/register.component.dart';
-import 'package:flutter_register_login_form_private/src/shared/widgets/verticalSpacing.widget.dart';
+import 'package:flutter_register_login_form/src/components/login.component.dart';
+import 'package:flutter_register_login_form/src/components/register.component.dart';
+import 'package:flutter_register_login_form/src/shared/widgets/verticalSpacing.widget.dart';
+import 'package:flutter_register_login_form/src/shared/widgets/wave.widget.dart';
+import 'package:wave/config.dart';
 
 class HomeComponent extends StatefulWidget {
   const HomeComponent({Key? key, required this.title}) : super(key: key);
@@ -13,6 +16,19 @@ class HomeComponent extends StatefulWidget {
 
 class _HomeComponentState extends State<HomeComponent> {
 
+  Config animationConfig = CustomConfig(
+    gradients: [
+      [Colors.red, Color(0xEEF44336)],
+      [Colors.red[800]!, Color(0x77E57373)],
+      [Colors.orange, Color(0x66FF9800)],
+      [Colors.yellow, Color(0x55FFEB3B)]
+    ],
+    durations: [35000, 19440, 10800, 6000],
+    heightPercentages: [0.20, 0.23, 0.25, 0.30],
+    gradientBegin: Alignment.bottomLeft,
+    gradientEnd: Alignment.topRight,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,38 +36,51 @@ class _HomeComponentState extends State<HomeComponent> {
         color: Colors.white,
         child: Column(
           children: <Widget>[
-            verticalSpacing(150),
-            colorBall(Colors.red[400], 100, 50),
-            welcomeToCodeVerification(),
-            verticalSpacing(50),
-            colorBall(Colors.cyan , 50, 340),
-            verticalSpacing(130),
+            waveAndTitle(),
+            verticalSpacing(20),
             getStartedButton(),
             verticalSpacing(10),
             loginButton(),
-            verticalSpacing(100),
-            colorBall(Colors.purple[200] , 65, 100),
           ],
         ),
       ),
     );
   }
 
+  Widget waveAndTitle() {
+    return Stack(
+      children: [
+        waveAnimation(
+          backgroundColor: Colors.purpleAccent,
+          height: MediaQuery.of(context).size.height / 2 + 150,
+          context: context,
+          config: animationConfig,
+        ),
+        Column(
+          children: [
+            verticalSpacing(200),
+            welcomeToCodeVerification(),
+          ],
+        )
+      ],
+    );
+  }
+
   Widget getStartedButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width - 60,
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: GestureDetector(
+    return GestureDetector(
+      child: Container(
+        width: MediaQuery.of(context).size.width - 60,
+        height: 70,
+        decoration: BoxDecoration(
+          color: Colors.orange[400],
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: const [
             Text(
-              'Get Started',
+              'Sign Up',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -59,32 +88,48 @@ class _HomeComponentState extends State<HomeComponent> {
             ),
           ],
         ),
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterComponent(title: 'Register form')));
-        },
       ),
+      onTap: () {
+        Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => const RegisterComponent(title: 'Register form'),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                const begin = Offset(0.0, 1.0);
+                const end = Offset.zero;
+                const curve = Curves.ease;
+
+                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+            ));
+      },
     );
   }
 
   Widget loginButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width - 60,
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.black,
-          width: 1,
+    return GestureDetector(
+      child: Container(
+        width: MediaQuery.of(context).size.width - 60,
+        height: 70,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.black,
+            width: 1,
+          ),
         ),
-      ),
-      child: GestureDetector(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: const [
             Text(
-              'Login',
+              'Log In',
               style: TextStyle(
                 color: Colors.black,
                 fontSize: 20,
@@ -92,14 +137,26 @@ class _HomeComponentState extends State<HomeComponent> {
             ),
           ],
         ),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Login is disabled, please press the button above.'),
-            ),
-          );
-        },
       ),
+      onTap: () {
+        Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => const LoginComponent(title: 'Login form'),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                const begin = Offset(0.0, 1.0);
+                const end = Offset.zero;
+                const curve = Curves.ease;
+
+                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+            ));
+      },
     );
   }
 
@@ -131,7 +188,7 @@ class _HomeComponentState extends State<HomeComponent> {
         Row(
           children: const [
             SizedBox(
-              width: 20,
+              width: 30,
             ),
             Text(
               'Welcome to',
@@ -148,10 +205,10 @@ class _HomeComponentState extends State<HomeComponent> {
         Row(
           children: const [
             SizedBox(
-              width: 20,
+              width: 30,
             ),
             Text(
-              'SIGNUP EXAMPLE',
+              'EXAMPLE APP',
               style: TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
@@ -162,4 +219,6 @@ class _HomeComponentState extends State<HomeComponent> {
       ],
     );
   }
+
+
 }

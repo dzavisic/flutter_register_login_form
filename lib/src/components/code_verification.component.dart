@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_register_login_form_private/src/shared/widgets/verticalSpacing.widget.dart';
+import 'package:flutter_register_login_form/src/components/register_password.component.dart';
+import 'package:flutter_register_login_form/src/shared/widgets/verticalSpacing.widget.dart';
+import 'package:flutter_register_login_form/src/shared/widgets/wave.widget.dart';
+import 'package:wave/config.dart';
 
 class CodeVerificationComponent extends StatefulWidget {
   const CodeVerificationComponent({Key? key, required this.phoneNumber}) : super(key: key);
@@ -12,6 +15,20 @@ class CodeVerificationComponent extends StatefulWidget {
 
 class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
 
+  Config animationConfig = CustomConfig(
+    gradients: [
+      [Colors.red, Color(0xEEF44336)],
+      [Colors.red[800]!, Color(0x77E57373)],
+      [Colors.orange, Color(0x66FF9800)],
+      [Colors.yellow, Color(0x55FFEB3B)]
+    ],
+    durations: [35000, 19440, 10800, 6000],
+    heightPercentages: [0.20, 0.23, 0.25, 0.30],
+    gradientBegin: Alignment.bottomLeft,
+    gradientEnd: Alignment.topRight,
+  );
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,15 +36,10 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            verticalSpacing(80),
-            backButton(),
-            verticalSpacing(100),
-            fillInformationBelow(),
-            verticalSpacing(60),
-            form(),
-            verticalSpacing(70),
+            waveBackInfo(),
+            verticalSpacing(150),
             confirmButton(),
-            verticalSpacing(20),
+            verticalSpacing(10),
             resendButton(),
           ],
         ),
@@ -43,11 +55,32 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
       child: Row(
         children: [
           horizontalSpacing(30),
-          const Icon(Icons.arrow_back),
-          horizontalSpacing(10),
-          const Text('Back', style: TextStyle(fontSize: 20),),
+          const Icon(Icons.arrow_back_ios_new),
         ],
       ),
+    );
+  }
+
+  Widget waveBackInfo() {
+    return Stack(
+      children: [
+        waveAnimation(
+          backgroundColor: Colors.purpleAccent,
+          height: MediaQuery.of(context).size.height / 1.8,
+          context: context,
+          config: animationConfig,
+        ),
+        Column(
+          children: [
+            verticalSpacing(80),
+            backButton(),
+            verticalSpacing(50),
+            fillInformationBelow(),
+            verticalSpacing(150),
+            form(),
+          ],
+        )
+      ],
     );
   }
 
@@ -93,7 +126,7 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
               ),
             ),
             horizontalSpacing(10),
-            TextButton(onPressed: () {}, child: const Text('Change phone number?', style: TextStyle(fontSize: 16),)),
+            TextButton(onPressed: () {}, child: const Text('Change phone number?', style: TextStyle(fontSize: 16, color: Colors.red),)),
           ],
         ),
       ],
@@ -113,7 +146,7 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
               child: TextField(
                 style: const TextStyle(
                   fontSize: 32,
-                  color: Colors.cyan,
+                  color: Colors.orange,
                 ),
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
@@ -125,7 +158,7 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(
-                      color: Colors.cyan,
+                      color: Colors.orange,
                       width: 1,
                     ),
                   ),
@@ -147,7 +180,7 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
               child: TextField(
                 style: const TextStyle(
                   fontSize: 32,
-                  color: Colors.cyan,
+                  color: Colors.orange,
                 ),
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
@@ -159,7 +192,7 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(
-                      color: Colors.cyan,
+                      color: Colors.orange,
                       width: 1,
                     ),
                   ),
@@ -181,7 +214,7 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
               child: TextField(
                 style: const TextStyle(
                   fontSize: 32,
-                  color: Colors.cyan,
+                  color: Colors.orange,
                 ),
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
@@ -193,7 +226,7 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(
-                      color: Colors.cyan,
+                      color: Colors.orange,
                       width: 1,
                     ),
                   ),
@@ -215,7 +248,7 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
               child: TextField(
                 style: const TextStyle(
                   fontSize: 32,
-                  color: Colors.cyan,
+                  color: Colors.orange,
                 ),
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
@@ -227,15 +260,12 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: const BorderSide(
-                      color: Colors.cyan,
+                      color: Colors.orange,
                       width: 1,
                     ),
                   ),
                 ),
                 onChanged: (value) {
-                  if (value.isNotEmpty) {
-                    FocusScope.of(context).nextFocus();
-                  }
                 },
                 inputFormatters: [
                   LengthLimitingTextInputFormatter(1),
@@ -250,14 +280,14 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
   }
 
   Widget confirmButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width - 60,
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: GestureDetector(
+    return GestureDetector(
+      child: Container(
+        width: MediaQuery.of(context).size.width - 60,
+        height: 70,
+        decoration: BoxDecoration(
+          color: Colors.orange,
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -272,30 +302,49 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
           ],
 
         ),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Phone number is verified'),
-            ),
-          );
-        },
       ),
+      onTap: () {
+        Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => const RegisterPasswordComponent(
+                title: 'Register Password',
+              ),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                const begin = Offset(0.0, 1.0);
+                const end = Offset.zero;
+                const curve = Curves.ease;
+
+                var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                return SlideTransition(
+                  position: animation.drive(tween),
+                  child: child,
+                );
+              },
+            ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Phone number is verified'),
+          ),
+        );
+      },
     );
   }
 
   Widget resendButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width - 60,
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.black,
-          width: 1,
+    return GestureDetector(
+      child: Container(
+        width: MediaQuery.of(context).size.width - 60,
+        height: 70,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.black,
+            width: 1,
+          ),
         ),
-      ),
-      child: GestureDetector(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -308,16 +357,15 @@ class _CodeVerificationComponentState extends State<CodeVerificationComponent> {
               ),
             ),
           ],
-
         ),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('SMS Code sent'),
-            ),
-          );
-        },
       ),
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('SMS Code sent'),
+          ),
+        );
+      },
     );
   }
 }

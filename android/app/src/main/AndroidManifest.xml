@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.flutter_register_login_form_private">
+    package="com.example.flutter_register_login_form">
    <application
-        android:label="flutter_register_login_form_private"
+        android:label="flutter_register_login_form"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

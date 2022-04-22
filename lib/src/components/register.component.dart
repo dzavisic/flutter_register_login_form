@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_register_login_form_private/src/components/code_verification.component.dart';
-import 'package:flutter_register_login_form_private/src/shared/data/countries.dart';
-import 'package:flutter_register_login_form_private/src/shared/widgets/verticalSpacing.widget.dart';
+import 'package:flutter_register_login_form/src/components/code_verification.component.dart';
+import 'package:flutter_register_login_form/src/shared/data/countries.dart';
+import 'package:flutter_register_login_form/src/shared/widgets/verticalSpacing.widget.dart';
+import 'package:flutter_register_login_form/src/shared/widgets/wave.widget.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:wave/config.dart';
 
 class RegisterComponent extends StatefulWidget {
   const RegisterComponent({Key? key, required this.title}) : super(key: key);
@@ -13,18 +16,31 @@ class RegisterComponent extends StatefulWidget {
 }
 
 class _RegisterComponentState extends State<RegisterComponent> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _phoneKey = GlobalKey<FormState>();
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController firstNameController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController countryFlagController = TextEditingController();
-  String selectValue = '';
+  final TextEditingController countryFlagController = TextEditingController(text: 'US');
+  String selectValue = 'US';
+  Config animationConfig = CustomConfig(
+    gradients: [
+      [Colors.red, Color(0xEEF44336)],
+      [Colors.red[800]!, Color(0x77E57373)],
+      [Colors.orange, Color(0x66FF9800)],
+      [Colors.yellow, Color(0x55FFEB3B)]
+    ],
+    durations: [35000, 19440, 10800, 6000],
+    heightPercentages: [0.20, 0.23, 0.25, 0.30],
+    gradientBegin: Alignment.bottomLeft,
+    gradientEnd: Alignment.topRight,
+  );
 
   @override
   void initState() {
     super.initState();
     phoneNumberController.text = '+1';
-    countryFlagController.text = '🇺🇸';
   }
 
   @override
@@ -34,21 +50,38 @@ class _RegisterComponentState extends State<RegisterComponent> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            verticalSpacing(80),
-            backButton(),
-            verticalSpacing(80),
-            fillInformationBelow(),
-            verticalSpacing(80),
+            waveBackInfo(),
             form(),
-            verticalSpacing(60),
+            verticalSpacing(10),
             hintForCode(),
             verticalSpacing(10),
             phoneNumberInput(),
-            verticalSpacing(40),
+            verticalSpacing(80),
             sendCodeButton(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget waveBackInfo() {
+    return Stack(
+      children: [
+        waveAnimation(
+          backgroundColor: Colors.purpleAccent,
+          height: MediaQuery.of(context).size.height / 3,
+          context: context,
+          config: animationConfig,
+        ),
+        Column(
+          children: [
+            verticalSpacing(80),
+            backButton(),
+            verticalSpacing(150),
+            fillInformationBelow(),
+          ],
+        )
+      ],
     );
   }
 
@@ -60,9 +93,7 @@ class _RegisterComponentState extends State<RegisterComponent> {
       child: Row(
         children: [
           horizontalSpacing(30),
-          const Icon(Icons.arrow_back),
-          horizontalSpacing(10),
-          const Text('Back', style: TextStyle(fontSize: 20),),
+          const Icon(Icons.arrow_back_ios_new)
         ],
       ),
     );
@@ -77,24 +108,7 @@ class _RegisterComponentState extends State<RegisterComponent> {
               width: 20,
             ),
             Text(
-              'Let us know a little more',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 5,
-        ),
-        Row(
-          children: const [
-            SizedBox(
-              width: 20,
-            ),
-            Text(
-              'about you',
+              'Information',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
@@ -107,14 +121,18 @@ class _RegisterComponentState extends State<RegisterComponent> {
   }
 
   Widget form() {
-    return Column(
-      children: [
-        firstNameInput(),
-        verticalSpacing(8),
-        lastNameInput(),
-        verticalSpacing(8),
-        emailInput(),
-      ],
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          verticalSpacing(15),
+          firstNameInput(),
+          verticalSpacing(15),
+          lastNameInput(),
+          verticalSpacing(15),
+          emailInput(),
+        ],
+      ),
     );
   }
 
@@ -135,6 +153,12 @@ class _RegisterComponentState extends State<RegisterComponent> {
         style: const TextStyle(
           fontSize: 20,
         ),
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please enter your first name';
+          }
+          return null;
+        },
         keyboardType: TextInputType.text,
       ),
     );
@@ -157,6 +181,12 @@ class _RegisterComponentState extends State<RegisterComponent> {
         style: const TextStyle(
           fontSize: 20,
         ),
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please enter your last name';
+          }
+          return null;
+        },
         keyboardType: TextInputType.text,
       ),
     );
@@ -179,6 +209,17 @@ class _RegisterComponentState extends State<RegisterComponent> {
         style: const TextStyle(
           fontSize: 20,
         ),
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please enter your email';
+          }
+          if (!RegExp(
+                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+              .hasMatch(value)) {
+            return 'Please enter a valid email';
+          }
+          return null;
+        },
         keyboardType: TextInputType.emailAddress,
       ),
     );
@@ -191,7 +232,7 @@ class _RegisterComponentState extends State<RegisterComponent> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: const [
           Text(
-            'We will send you a code to your phone number',
+            'Phone number',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -205,79 +246,82 @@ class _RegisterComponentState extends State<RegisterComponent> {
   Widget phoneNumberInput() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Column(
-        children: [
-          TextFormField(
-            controller: phoneNumberController,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter your phone number';
-              }
-              return null;
-            },
-            decoration: InputDecoration(
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              contentPadding: const EdgeInsets.only(left: 10, bottom: 20),
-              prefix: SizedBox(
-                width: 70,
-                height: 50,
-                child: DropdownButton<String>(
-                  value: countryFlagController.text,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectValue = newValue!;
-                      countryFlagController.text = newValue;
-                    });
-                  },
-                  underline: Container(
-                    height: 0,
-                  ),
-                  items: countries
-                    .map<DropdownMenuItem<String>>((Map<String, dynamic> value) {
-                      if (value['dialCode'].isNotEmpty) {
+      child: Form(
+        key: _phoneKey,
+        child: Column(
+          children: [
+            TextFormField(
+              controller: phoneNumberController,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter your phone number';
+                }
+                return null;
+              },
+              textAlignVertical: TextAlignVertical.center,
+              decoration: InputDecoration(
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding: const EdgeInsets.only(left: 10, bottom: 20, top: 10),
+                prefix: SizedBox(
+                  width: 70,
+                  height: 40,
+                  child: DropdownButton<String>(
+                    value: selectValue,
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectValue = newValue!;
+                        countryFlagController.text = newValue;
+                      });
+                    },
+                    underline: Container(
+                      height: 0,
+                    ),
+                    menuMaxHeight: 300,
+                    items: COUNTRIES
+                      .map<DropdownMenuItem<String>>((Map<String, dynamic> value) {
                         return DropdownMenuItem<String>(
-                          value: value['flag'],
+                          value: value['code'],
                           onTap: () {
-                            for (Map<String, dynamic> country in countries) {
-                              if (country['flag'] == value['flag']) {
-                                phoneNumberController.text = '+' + country['dialCode'];
+                            for (Map<String, dynamic> country in COUNTRIES) {
+                              if (country['code'] == value['code']) {
+                                phoneNumberController.text = country['dial_code'];
                                 break;
                               }
                             }
                           },
-                          child: Text(value['flag'],
-                              style: const TextStyle(
-                                fontSize: 30,
-                              )),
+                          child: SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: SvgPicture.asset('assets/flags/${value['code'].toString().toLowerCase()}.svg')
+                          ),
                         );
-                      }
-                      throw Exception('No dial code');
-                  }).toList(),
-                ),
-              )
+                    }).toList(),
+                  ),
+                )
+              ),
+              style: const TextStyle(
+                fontSize: 20
+              ),
+              keyboardType: TextInputType.phone,
             ),
-            style: const TextStyle(
-              fontSize: 20
-            ),
-            keyboardType: TextInputType.phone,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget sendCodeButton() {
-    return Container(
-      width: MediaQuery.of(context).size.width - 60,
-      height: 70,
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: GestureDetector(
+    return GestureDetector(
+      child: Container(
+        width: MediaQuery.of(context).size.width - 60,
+        height: 70,
+        decoration: BoxDecoration(
+          color: Colors.orange,
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -292,34 +336,41 @@ class _RegisterComponentState extends State<RegisterComponent> {
           ],
 
         ),
-        onTap: () {
-          if (phoneNumberController.text.isNotEmpty
-              && firstNameController.text.isNotEmpty
-              && lastNameController.text.isNotEmpty
-              && emailController.text.isNotEmpty) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CodeVerificationComponent(
-                  phoneNumber: phoneNumberController.text
-                ),
-              ),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('SMS Code sent'),
-              ),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Please fill every field'),
-              ),
-            );
-          }
-
-        },
       ),
+      onTap: () {
+        if (_formKey.currentState!.validate() && _phoneKey.currentState!.validate()) {
+          Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => CodeVerificationComponent(
+                    phoneNumber: phoneNumberController.text
+                ),
+                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  const begin = Offset(0.0, 1.0);
+                  const end = Offset.zero;
+                  const curve = Curves.ease;
+
+                  var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+                  return SlideTransition(
+                    position: animation.drive(tween),
+                    child: child,
+                  );
+                },
+              ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('SMS Code sent'),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please fill every field'),
+            ),
+          );
+        }
+      },
     );
   }
 

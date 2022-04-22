@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_register_login_form_private/src/components/home.component.dart';
+import 'package:flutter_register_login_form/src/components/home.component.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
       title: 'Registration Form',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.cyan,
+        primarySwatch: Colors.orange,
       ),
       home: const HomeComponent(title: 'Registration Form'),
     );

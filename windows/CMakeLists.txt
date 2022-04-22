@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(flutter_register_login_form_private LANGUAGES CXX)
+project(flutter_register_login_form LANGUAGES CXX)
 
-set(BINARY_NAME "flutter_register_login_form_private")
+set(BINARY_NAME "flutter_register_login_form")
 
 cmake_policy(SET CMP0063 NEW)
 

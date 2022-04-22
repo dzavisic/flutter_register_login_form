@@ -1,6 +1,6 @@
 {
-    "name": "flutter_register_login_form_private",
-    "short_name": "flutter_register_login_form_private",
+    "name": "flutter_register_login_form",
+    "short_name": "flutter_register_login_form",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
