@@ -2,4 +2,6 @@
 
 ## Preview
 
-<img src="assets/register.gif" alt="drawing" width="200"/>
+
+https://user-images.githubusercontent.com/43092397/164759683-3685f22b-b29f-48f0-b767-227131362852.mp4
+
